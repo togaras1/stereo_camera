@@ -32,10 +32,10 @@ void setup() {
   for(int i = 0; i < cameras.length; ++i){
     String[] attr = cameras[i].split(",");
     if(attr[1].split("=")[1].equals(cameraWidth + "x" + cameraHeight) && attr[2].split("=")[1].equals("30")){
-      if(l == -1)
-        l = i;
-      else if(r == -1)
+      if(r == -1)
         r = i;
+      else if(l == -1)
+        l = i;
       else
         break;
     }
@@ -118,40 +118,39 @@ void draw(){
   
   Limg.beginDraw();
   Limg.clear();
-  Limg.pushMatrix();
-  Limg.translate(Limg.width,Limg.height);
-  Limg.rotate(PI);
   Limg.image(cameraL.copy(),0,0);
-  Limg.popMatrix();
   Limg.image(uniImg.copy(),0,0);
   Limg.endDraw();
   
   Rimg.beginDraw();
   Rimg.clear();
+  Rimg.pushMatrix();
+  Rimg.translate(Rimg.width, Rimg.height);
+  Rimg.rotate(PI);
   Rimg.image(cameraR.copy(),0,0);
+  Rimg.popMatrix();
   Rimg.image(uniImg.copy(),0,0);
   Rimg.endDraw();
   
   noStroke();
+  pushMatrix();
+  translate(30,0);
+  beginShape(QUADS);
   for(int i = 0; i < vertexes.length; ++i){
     if(i % 4 == 0){
-      if(i != 0)
-        endShape();
-      beginShape();
       texture(Limg);
     }
     int j = vertexes[i];
     vertex(posX[j],posY[j],posU[j],posV[j]);
   }
   endShape();
+  popMatrix();
   
   pushMatrix();
-  translate(width/2,0);
+  translate(370,0);
+  beginShape(QUADS);
   for(int i = 0; i < vertexes.length; ++i){
     if(i % 4 == 0){
-      if(i != 0)
-        endShape();
-      beginShape();
       texture(Rimg);
     }
     int j = vertexes[i];
@@ -163,4 +162,20 @@ void draw(){
 
 void captureEvent(Capture camera){
   camera.read();
+}
+
+void keyPressed() {
+
+  // Pのキーが入力された時に保存
+  if(key == 'p' || key == 'P') {
+
+    // デスクトップのパスを取得
+    String path  = System.getProperty("user.home") + "/Desktop/processing.png";
+
+    // 保存
+    save(path);
+
+    // ログ用途
+    println("screen saved." + path); 
+  }
 }
